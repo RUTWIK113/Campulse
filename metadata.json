@@ -1,0 +1,5 @@
+{
+  "name": "Campulse",
+  "description": "A dynamic and interactive platform for students and clubs to discover, create, and manage institute events. Features event filtering, Google Calendar integration, club recruitment portals, and an AI-powered event idea generator, all wrapped in a stunning, modern UI.",
+  "requestFramePermissions": []
+}
