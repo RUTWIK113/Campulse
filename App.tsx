@@ -208,20 +208,56 @@ const App: React.FC = () => {
 // --- Page Components ---
 
 const LandingPage: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => (
-  <div className="flex-grow flex flex-col items-center justify-center text-center p-4 bg-gradient-to-br from-brand-bg-dark via-slate-900 to-brand-bg-dark text-white overflow-hidden">
-    <div className="relative">
-      <div className="absolute -top-16 -left-16 w-72 h-72 bg-brand-primary-dark rounded-full mix-blend-screen filter blur-xl opacity-30 animate-pulse-glow"></div>
-      <div className="absolute -bottom-16 -right-16 w-72 h-72 bg-brand-secondary-dark rounded-full mix-blend-screen filter blur-xl opacity-30 animate-pulse-glow animation-delay-1500"></div>
-      <div className="relative z-10">
-        <h1 className="text-6xl md:text-8xl font-extrabold mb-4">Campulse</h1>
-        <p className="text-xl md:text-2xl text-brand-text-secondary-dark mb-8">Your Campus Pulse. All events, one place.</p>
-        <Button onClick={() => onNavigate('login')} className="text-lg px-8 py-4">
-          Get Started
-        </Button>
+  <div className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-teal-50 via-cyan-100 to-emerald-100 dark:from-emerald-900/50 dark:via-brand-bg-dark dark:to-cyan-900/30 text-brand-text-light dark:text-brand-text-dark overflow-hidden">
+    <div className="container mx-auto">
+      <div className="grid md:grid-cols-2 gap-8 items-center">
+        {/* Left Column: Text Content */}
+        <div className="text-center md:text-left animate-slide-in">
+          <h1 className="text-5xl lg:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-primary-light to-brand-secondary-light dark:from-brand-primary-dark dark:to-brand-secondary-dark">
+            Campulse
+          </h1>
+          <p className="text-lg md:text-xl text-brand-text-secondary-light dark:text-brand-text-secondary-dark mb-8 max-w-md mx-auto md:mx-0">
+            Your Campus Pulse. Discover, create, and join events. All in one place.
+          </p>
+          <Button onClick={() => onNavigate('login')} className="text-lg px-8 py-4 animate-pulse-glow">
+            Get Started
+          </Button>
+        </div>
+        
+        {/* Right Column: Visual Graphic */}
+        <div className="relative h-80 md:h-96 w-full flex items-center justify-center animate-slide-in" style={{animationDelay: '0.2s'}}>
+            {/* Animated SVG Blob */}
+            <svg width="100%" height="100%" viewBox="0 0 400 400" className="absolute opacity-60 dark:opacity-30 max-w-lg">
+                <defs>
+                    <linearGradient id="blobGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" className="text-brand-primary-dark" stopColor="currentColor" />
+                        <stop offset="100%" className="text-brand-secondary-dark" stopColor="currentColor" />
+                    </linearGradient>
+                </defs>
+                <path fill="url(#blobGradient)" d="M334,295Q268,340,200,342.5Q132,345,74.5,297.5Q17,250,71.5,196Q126,142,197,126Q268,110,334,155Q400,200,334,295Z" transform="translate(0, -50)">
+                    <animate attributeName="d" dur="15s" repeatCount="indefinite" values="M334,295Q268,340,200,342.5Q132,345,74.5,297.5Q17,250,71.5,196Q126,142,197,126Q268,110,334,155Q400,200,334,295Z; M349.5,296.5Q299,343,224.5,348Q150,353,101,301.5Q52,250,91.5,194.5Q131,139,203,131Q275,123,325,186.5Q375,250,349.5,296.5Z; M334,295Q268,340,200,342.5Q132,345,74.5,297.5Q17,250,71.5,196Q126,142,197,126Q268,110,334,155Q400,200,334,295Z;"></animate>
+                </path>
+            </svg>
+            
+            {/* Floating "Event Type" cards */}
+            <div className="relative w-full h-full">
+                <div className="absolute top-[20%] left-[25%] w-12 h-12 bg-brand-surface-light/80 dark:bg-brand-surface-dark/80 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center transform rotate-12 animate-pulse-glow" style={{ animationDelay: '0.2s' }}>
+                    <div className="w-6 h-6 bg-brand-primary-light dark:bg-brand-primary-dark rounded-md"></div>
+                </div>
+                <div className="absolute top-[55%] left-[15%] w-16 h-16 bg-brand-surface-light/80 dark:bg-brand-surface-dark/80 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center transform -rotate-12 animate-pulse-glow" style={{animationDelay: '0.7s'}}>
+                    <div className="w-8 h-8 bg-brand-secondary-light dark:bg-brand-secondary-dark rounded-full"></div>
+                </div>
+                 <div className="absolute top-[30%] right-[20%] w-14 h-14 bg-brand-surface-light/80 dark:bg-brand-surface-dark/80 backdrop-blur-sm rounded-2xl shadow-lg flex items-center justify-center transform rotate-6 animate-pulse-glow" style={{animationDelay: '1.2s'}}>
+                    <div className="w-7 h-7 bg-brand-accent rounded-lg"></div>
+                </div>
+            </div>
+        </div>
+
       </div>
     </div>
   </div>
 );
+
 
 const FirebaseConfigErrorGuide: React.FC<{ projectId: string }> = ({ projectId }) => {
   const consoleUrl = `https://console.firebase.google.com/u/0/project/${projectId}/authentication/providers`;
