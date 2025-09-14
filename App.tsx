@@ -1,11 +1,20 @@
+
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { User, UserRole, Event, Club, GeneratedEventIdeas, RecruitmentPost } from './types';
-import { authService, eventService, clubService, recruitmentService, geminiService } from './services';
+import { eventService, clubService, recruitmentService, geminiService } from './services';
 import { EventCard } from './components/EventCard';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
 import { Modal } from './components/ui/Modal';
-import { SparklesIcon, SunIcon, MoonIcon, LogoutIcon, HomeIcon, CalendarIcon, BriefcaseIcon, UsersIcon, MenuIcon, CloseIcon, GoogleIcon } from './components/Icons';
+import { SparklesIcon, SunIcon, MoonIcon, HomeIcon, CalendarIcon, BriefcaseIcon, UsersIcon, MenuIcon, CloseIcon, GoogleIcon } from './components/Icons';
+
+// --- Mock User ---
+const mockStudentUser: User = {
+  id: 'guest-student-001',
+  name: 'Guest Student',
+  email: 'guest@smail.institute.edu',
+  role: UserRole.STUDENT,
+};
 
 // --- Reusable UI Components ---
 
@@ -25,16 +34,15 @@ const LoadingPulse: React.FC = () => (
 );
 
 const Header: React.FC<{
-  user: User | null;
-  onLogout: () => void;
+  user: User;
   theme: 'dark' | 'light';
   onThemeToggle: () => void;
   currentPage: string;
   onNavigate: (page: string) => void;
-}> = ({ user, onLogout, theme, onThemeToggle, currentPage, onNavigate }) => {
+}> = ({ user, theme, onThemeToggle, currentPage, onNavigate }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
-    const navItems = user ? (user.role === UserRole.STUDENT ? [
+    const navItems = user.role === UserRole.STUDENT ? [
         { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
         { id: 'events', label: 'All Events', icon: CalendarIcon },
         { id: 'clubs', label: 'Clubs', icon: UsersIcon },
@@ -42,7 +50,7 @@ const Header: React.FC<{
     ] : [
         { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
         { id: 'my-events', label: 'Manage Events', icon: CalendarIcon },
-    ]) : [];
+    ];
 
     const NavLink: React.FC<{id: string, label: string}> = ({id, label}) => (
          <button
@@ -63,12 +71,12 @@ const Header: React.FC<{
         <header className="sticky top-0 z-40 bg-brand-surface-light/80 dark:bg-brand-surface-dark/80 backdrop-blur-lg shadow-md">
             <div className="container mx-auto px-4 py-3">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-brand-text-light dark:text-brand-text-dark cursor-pointer" onClick={() => onNavigate(user ? 'dashboard' : 'home')}>
+                    <h1 className="text-2xl font-bold text-brand-text-light dark:text-brand-text-dark cursor-pointer" onClick={() => onNavigate('dashboard')}>
                         Campulse
                     </h1>
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-4">
-                        {user && navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
+                        {navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
                         <button
                             onClick={onThemeToggle}
                             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -76,11 +84,6 @@ const Header: React.FC<{
                         >
                             {theme === 'dark' ? <SunIcon className="w-5 h-5 text-yellow-400" /> : <MoonIcon className="w-5 h-5 text-brand-primary-light" />}
                         </button>
-                        {user ? (
-                            <Button variant="ghost" onClick={onLogout}><LogoutIcon className="w-5 h-5" /> Logout</Button>
-                        ) : (
-                            <Button onClick={() => onNavigate('login')}>Login</Button>
-                        )}
                     </nav>
                     {/* Mobile Menu Button */}
                     <div className="md:hidden flex items-center gap-2">
@@ -91,19 +94,15 @@ const Header: React.FC<{
                         >
                             {theme === 'dark' ? <SunIcon className="w-5 h-5 text-yellow-400" /> : <MoonIcon className="w-5 h-5 text-brand-primary-light" />}
                         </button>
-                         {user && (
-                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-brand-text-light dark:text-brand-text-dark">
-                                {isMenuOpen ? <CloseIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
-                            </button>
-                        )}
-                         {!user && <Button onClick={() => onNavigate('login')}>Login</Button>}
+                        <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-brand-text-light dark:text-brand-text-dark">
+                            {isMenuOpen ? <CloseIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+                        </button>
                     </div>
                 </div>
                  {/* Mobile Nav Menu */}
-                {isMenuOpen && user && (
+                {isMenuOpen && (
                     <div className="md:hidden mt-4 bg-brand-surface-light dark:bg-brand-surface-dark rounded-lg p-4 space-y-2 animate-slide-in">
                         {navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
-                         <Button variant="ghost" onClick={onLogout} className="w-full justify-start"><LogoutIcon className="w-5 h-5" /> Logout</Button>
                     </div>
                 )}
             </div>
@@ -114,9 +113,9 @@ const Header: React.FC<{
 
 // --- Main Application ---
 const App: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [page, setPage] = useState('home');
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User>(mockStudentUser);
+  const [page, setPage] = useState('dashboard');
+  const [hasEntered, setHasEntered] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Effect to handle theme changes on the DOM
@@ -126,49 +125,11 @@ const App: React.FC = () => {
     root.classList.add(theme);
   }, [theme]);
 
-  // Effect to subscribe to auth state changes from Firebase
-  useEffect(() => {
-    setIsLoading(true);
-    const unsubscribe = authService.onAuthChange(currentUser => {
-      setUser(currentUser);
-      setIsLoading(false);
-    });
-    return () => unsubscribe(); // Cleanup subscription on unmount
-  }, []); // Empty dependency array ensures this runs only once on mount
-
-  // Effect to handle navigation based on authentication state
-  useEffect(() => {
-    if (isLoading) return; // Wait until the initial auth check is complete
-
-    if (user && (page === 'home' || page === 'login')) {
-      // If user is logged in and on a public page, redirect to their dashboard
-      setPage('dashboard');
-    } else if (!user && page !== 'home' && page !== 'login') {
-      // If user is logged out and on a private page, redirect to the landing page
-      setPage('home');
-    }
-  }, [user, page, isLoading]);
-
-  const handleLogout = async () => {
-    await authService.logout();
-    // The onAuthChange listener will handle setting the user to null and the navigation effect will redirect
-  };
-
   const handleThemeToggle = () => {
     setTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
   };
   
   const renderPage = () => {
-    if (isLoading) return <LoadingPulse />;
-    
-    if (!user) {
-        switch(page) {
-            case 'login': return <LoginPage onNavigate={setPage}/>
-            default: return <LandingPage onNavigate={setPage}/>
-        }
-    }
-
-    // --- Logged in views ---
     const mainContent = () => {
       switch(page) {
         case 'dashboard':
@@ -196,19 +157,23 @@ const App: React.FC = () => {
     );
   };
   
+  if (!hasEntered) {
+    return <LandingPage onEnter={() => setHasEntered(true)} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Header user={user} onLogout={handleLogout} theme={theme} onThemeToggle={handleThemeToggle} onNavigate={setPage} currentPage={page} />
+      <Header user={user} theme={theme} onThemeToggle={handleThemeToggle} onNavigate={setPage} currentPage={page} />
       {renderPage()}
     </div>
   );
 };
 
 
-// --- Page Components ---
+// --- Page Components (Unused login/landing pages remain for potential future use) ---
 
-const LandingPage: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => (
-  <div className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-teal-50 via-cyan-100 to-emerald-100 dark:from-emerald-900/50 dark:via-brand-bg-dark dark:to-cyan-900/30 text-brand-text-light dark:text-brand-text-dark overflow-hidden">
+const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => (
+  <div className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-teal-50 via-cyan-100 to-emerald-100 dark:from-emerald-900/50 dark:via-brand-bg-dark dark:to-cyan-900/30 text-brand-text-light dark:text-brand-text-dark overflow-hidden min-h-screen">
     <div className="container mx-auto">
       <div className="grid md:grid-cols-2 gap-8 items-center">
         {/* Left Column: Text Content */}
@@ -219,7 +184,7 @@ const LandingPage: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavig
           <p className="text-lg md:text-xl text-brand-text-secondary-light dark:text-brand-text-secondary-dark mb-8 max-w-md mx-auto md:mx-0">
             Your Campus Pulse. Discover, create, and join events. All in one place.
           </p>
-          <Button onClick={() => onNavigate('login')} className="text-lg px-8 py-4 animate-pulse-glow">
+          <Button onClick={onEnter} className="text-lg px-8 py-4 animate-pulse-glow">
             Get Started
           </Button>
         </div>
@@ -354,25 +319,7 @@ const LoginPage: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigat
   const handleLogin = async () => {
     setError('');
     setIsLoggingIn(true);
-    try {
-      await authService.loginWithGoogle();
-      // onAuthChange listener in App.tsx will handle navigation
-    } catch (err: any) {
-      console.error("Firebase Login Error:", err);
-      if (err.code === 'auth/configuration-not-found') {
-          setError(<FirebaseConfigErrorGuide projectId="campulse-9f1c8" />);
-      } else if (err.code === 'auth/unauthorized-domain') {
-          const currentDomain = window.location.hostname;
-          setError(<FirebaseDomainErrorGuide projectId="campulse-9f1c8" currentDomain={currentDomain} />);
-      } else if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-        setError("Login cancelled. Please try again when you're ready.");
-      } else if (err.code === 'auth/operation-not-allowed') {
-          setError("Login failed. Please ensure this domain is authorized in your Firebase project settings under Authentication > Settings.");
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
-      setIsLoggingIn(false);
-    }
+    // This function will not be called in the current app state, but is kept for reference
   };
 
   return (
