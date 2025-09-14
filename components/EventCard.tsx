@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Event } from '../types';
 import { formatDate } from '../utils';
@@ -11,13 +12,14 @@ interface EventCardProps {
   isBookmarked: boolean;
   onBookmarkToggle: (eventId: string) => void;
   className?: string;
+  userEmail?: string;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ event, isBookmarked, onBookmarkToggle, className }) => {
+export const EventCard: React.FC<EventCardProps> = ({ event, isBookmarked, onBookmarkToggle, className, userEmail }) => {
 
   const handleAddToCalendar = (e: React.MouseEvent) => {
     e.stopPropagation();
-    window.open(generateGoogleCalendarLink(event), '_blank');
+    window.open(generateGoogleCalendarLink(event, userEmail), '_blank');
   };
 
   const handleBookmarkClick = (e: React.MouseEvent) => {

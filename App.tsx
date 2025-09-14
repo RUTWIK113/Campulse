@@ -1,19 +1,13 @@
-<<<<<<< HEAD
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { User, UserRole, Event, Club, GeneratedEventIdeas, RecruitmentPost } from './types';
 import { eventService, clubService, recruitmentService, geminiService } from './services';
-=======
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { User, UserRole, Event, Club, GeneratedEventIdeas, RecruitmentPost } from './types';
-import { authService, eventService, clubService, recruitmentService, geminiService } from './services';
->>>>>>> 623e149 (your message here)
 import { EventCard } from './components/EventCard';
 import { Button } from './components/ui/Button';
 import { Input } from './components/ui/Input';
 import { Modal } from './components/ui/Modal';
-<<<<<<< HEAD
 import { SparklesIcon, SunIcon, MoonIcon, HomeIcon, CalendarIcon, BriefcaseIcon, UsersIcon, MenuIcon, CloseIcon, GoogleIcon } from './components/Icons';
+import { Logo } from './components/Logo';
 
 // --- Mock User ---
 const mockStudentUser: User = {
@@ -22,9 +16,6 @@ const mockStudentUser: User = {
   email: 'guest@smail.institute.edu',
   role: UserRole.STUDENT,
 };
-=======
-import { SparklesIcon, SunIcon, MoonIcon, LogoutIcon, HomeIcon, CalendarIcon, BriefcaseIcon, UsersIcon, MenuIcon, CloseIcon, GoogleIcon } from './components/Icons';
->>>>>>> 623e149 (your message here)
 
 // --- Reusable UI Components ---
 
@@ -35,7 +26,7 @@ const LoadingPulse: React.FC = () => (
         <div className="absolute inset-0 bg-brand-primary-dark rounded-full animate-pulse-glow"></div>
         <div className="absolute inset-2 bg-brand-secondary-dark rounded-full animate-pulse-glow animation-delay-300"></div>
         <div className="absolute inset-4 bg-brand-bg-dark rounded-full flex items-center justify-center">
-          <p className="font-bold text-lg text-white">C</p>
+          <Logo className="w-12 h-12" />
         </div>
       </div>
       <p className="text-brand-text-secondary-dark">Loading Campus Pulse...</p>
@@ -44,27 +35,15 @@ const LoadingPulse: React.FC = () => (
 );
 
 const Header: React.FC<{
-<<<<<<< HEAD
   user: User;
-=======
-  user: User | null;
-  onLogout: () => void;
->>>>>>> 623e149 (your message here)
   theme: 'dark' | 'light';
   onThemeToggle: () => void;
   currentPage: string;
   onNavigate: (page: string) => void;
-<<<<<<< HEAD
 }> = ({ user, theme, onThemeToggle, currentPage, onNavigate }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     
     const navItems = user.role === UserRole.STUDENT ? [
-=======
-}> = ({ user, onLogout, theme, onThemeToggle, currentPage, onNavigate }) => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    
-    const navItems = user ? (user.role === UserRole.STUDENT ? [
->>>>>>> 623e149 (your message here)
         { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
         { id: 'events', label: 'All Events', icon: CalendarIcon },
         { id: 'clubs', label: 'Clubs', icon: UsersIcon },
@@ -72,11 +51,7 @@ const Header: React.FC<{
     ] : [
         { id: 'dashboard', label: 'Dashboard', icon: HomeIcon },
         { id: 'my-events', label: 'Manage Events', icon: CalendarIcon },
-<<<<<<< HEAD
     ];
-=======
-    ]) : [];
->>>>>>> 623e149 (your message here)
 
     const NavLink: React.FC<{id: string, label: string}> = ({id, label}) => (
          <button
@@ -97,20 +72,15 @@ const Header: React.FC<{
         <header className="sticky top-0 z-40 bg-brand-surface-light/80 dark:bg-brand-surface-dark/80 backdrop-blur-lg shadow-md">
             <div className="container mx-auto px-4 py-3">
                 <div className="flex justify-between items-center">
-<<<<<<< HEAD
-                    <h1 className="text-2xl font-bold text-brand-text-light dark:text-brand-text-dark cursor-pointer" onClick={() => onNavigate('dashboard')}>
-=======
-                    <h1 className="text-2xl font-bold text-brand-text-light dark:text-brand-text-dark cursor-pointer" onClick={() => onNavigate(user ? 'dashboard' : 'home')}>
->>>>>>> 623e149 (your message here)
-                        Campulse
-                    </h1>
+                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate('dashboard')}>
+                      <Logo className="w-8 h-8" />
+                      <h1 className="text-2xl font-bold text-brand-text-light dark:text-brand-text-dark">
+                          Campulse
+                      </h1>
+                    </div>
                     {/* Desktop Nav */}
                     <nav className="hidden md:flex items-center gap-4">
-<<<<<<< HEAD
                         {navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
-=======
-                        {user && navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
->>>>>>> 623e149 (your message here)
                         <button
                             onClick={onThemeToggle}
                             className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
@@ -118,14 +88,6 @@ const Header: React.FC<{
                         >
                             {theme === 'dark' ? <SunIcon className="w-5 h-5 text-yellow-400" /> : <MoonIcon className="w-5 h-5 text-brand-primary-light" />}
                         </button>
-<<<<<<< HEAD
-=======
-                        {user ? (
-                            <Button variant="ghost" onClick={onLogout}><LogoutIcon className="w-5 h-5" /> Logout</Button>
-                        ) : (
-                            <Button onClick={() => onNavigate('login')}>Login</Button>
-                        )}
->>>>>>> 623e149 (your message here)
                     </nav>
                     {/* Mobile Menu Button */}
                     <div className="md:hidden flex items-center gap-2">
@@ -136,7 +98,6 @@ const Header: React.FC<{
                         >
                             {theme === 'dark' ? <SunIcon className="w-5 h-5 text-yellow-400" /> : <MoonIcon className="w-5 h-5 text-brand-primary-light" />}
                         </button>
-<<<<<<< HEAD
                         <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-brand-text-light dark:text-brand-text-dark">
                             {isMenuOpen ? <CloseIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
                         </button>
@@ -146,21 +107,6 @@ const Header: React.FC<{
                 {isMenuOpen && (
                     <div className="md:hidden mt-4 bg-brand-surface-light dark:bg-brand-surface-dark rounded-lg p-4 space-y-2 animate-slide-in">
                         {navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
-=======
-                         {user && (
-                            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="p-2 rounded-md text-brand-text-light dark:text-brand-text-dark">
-                                {isMenuOpen ? <CloseIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
-                            </button>
-                        )}
-                         {!user && <Button onClick={() => onNavigate('login')}>Login</Button>}
-                    </div>
-                </div>
-                 {/* Mobile Nav Menu */}
-                {isMenuOpen && user && (
-                    <div className="md:hidden mt-4 bg-brand-surface-light dark:bg-brand-surface-dark rounded-lg p-4 space-y-2 animate-slide-in">
-                        {navItems.map(item => <NavLink key={item.id} id={item.id} label={item.label} />)}
-                         <Button variant="ghost" onClick={onLogout} className="w-full justify-start"><LogoutIcon className="w-5 h-5" /> Logout</Button>
->>>>>>> 623e149 (your message here)
                     </div>
                 )}
             </div>
@@ -171,15 +117,9 @@ const Header: React.FC<{
 
 // --- Main Application ---
 const App: React.FC = () => {
-<<<<<<< HEAD
   const [user, setUser] = useState<User>(mockStudentUser);
   const [page, setPage] = useState('dashboard');
   const [hasEntered, setHasEntered] = useState(false);
-=======
-  const [user, setUser] = useState<User | null>(null);
-  const [page, setPage] = useState('home');
-  const [isLoading, setIsLoading] = useState(true);
->>>>>>> 623e149 (your message here)
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   // Effect to handle theme changes on the DOM
@@ -189,55 +129,11 @@ const App: React.FC = () => {
     root.classList.add(theme);
   }, [theme]);
 
-<<<<<<< HEAD
-=======
-  // Effect to subscribe to auth state changes from Firebase
-  useEffect(() => {
-    setIsLoading(true);
-    const unsubscribe = authService.onAuthChange(currentUser => {
-      setUser(currentUser);
-      setIsLoading(false);
-    });
-    return () => unsubscribe(); // Cleanup subscription on unmount
-  }, []); // Empty dependency array ensures this runs only once on mount
-
-  // Effect to handle navigation based on authentication state
-  useEffect(() => {
-    if (isLoading) return; // Wait until the initial auth check is complete
-
-    if (user && (page === 'home' || page === 'login')) {
-      // If user is logged in and on a public page, redirect to their dashboard
-      setPage('dashboard');
-    } else if (!user && page !== 'home' && page !== 'login') {
-      // If user is logged out and on a private page, redirect to the landing page
-      setPage('home');
-    }
-  }, [user, page, isLoading]);
-
-  const handleLogout = async () => {
-    await authService.logout();
-    // The onAuthChange listener will handle setting the user to null and the navigation effect will redirect
-  };
-
->>>>>>> 623e149 (your message here)
   const handleThemeToggle = () => {
     setTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
   };
   
   const renderPage = () => {
-<<<<<<< HEAD
-=======
-    if (isLoading) return <LoadingPulse />;
-    
-    if (!user) {
-        switch(page) {
-            case 'login': return <LoginPage onNavigate={setPage}/>
-            default: return <LandingPage onNavigate={setPage}/>
-        }
-    }
-
-    // --- Logged in views ---
->>>>>>> 623e149 (your message here)
     const mainContent = () => {
       switch(page) {
         case 'dashboard':
@@ -265,7 +161,6 @@ const App: React.FC = () => {
     );
   };
   
-<<<<<<< HEAD
   if (!hasEntered) {
     return <LandingPage onEnter={() => setHasEntered(true)} />;
   }
@@ -273,43 +168,30 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Header user={user} theme={theme} onThemeToggle={handleThemeToggle} onNavigate={setPage} currentPage={page} />
-=======
-  return (
-    <div className="min-h-screen flex flex-col">
-      <Header user={user} onLogout={handleLogout} theme={theme} onThemeToggle={handleThemeToggle} onNavigate={setPage} currentPage={page} />
->>>>>>> 623e149 (your message here)
       {renderPage()}
     </div>
   );
 };
 
 
-<<<<<<< HEAD
 // --- Page Components (Unused login/landing pages remain for potential future use) ---
 
 const LandingPage: React.FC<{ onEnter: () => void }> = ({ onEnter }) => (
   <div className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-teal-50 via-cyan-100 to-emerald-100 dark:from-emerald-900/50 dark:via-brand-bg-dark dark:to-cyan-900/30 text-brand-text-light dark:text-brand-text-dark overflow-hidden min-h-screen">
-=======
-// --- Page Components ---
-
-const LandingPage: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => (
-  <div className="flex-grow flex items-center justify-center p-4 sm:p-6 md:p-8 bg-gradient-to-br from-teal-50 via-cyan-100 to-emerald-100 dark:from-emerald-900/50 dark:via-brand-bg-dark dark:to-cyan-900/30 text-brand-text-light dark:text-brand-text-dark overflow-hidden">
->>>>>>> 623e149 (your message here)
     <div className="container mx-auto">
       <div className="grid md:grid-cols-2 gap-8 items-center">
         {/* Left Column: Text Content */}
         <div className="text-center md:text-left animate-slide-in">
-          <h1 className="text-5xl lg:text-7xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-primary-light to-brand-secondary-light dark:from-brand-primary-dark dark:to-brand-secondary-dark">
-            Campulse
-          </h1>
+          <div className="flex items-center gap-4 justify-center md:justify-start mb-4">
+              <Logo className="w-16 h-16 lg:w-20 lg:h-20" />
+              <h1 className="text-5xl lg:text-7xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-brand-primary-light to-brand-secondary-light dark:from-brand-primary-dark dark:to-brand-secondary-dark">
+                Campulse
+              </h1>
+          </div>
           <p className="text-lg md:text-xl text-brand-text-secondary-light dark:text-brand-text-secondary-dark mb-8 max-w-md mx-auto md:mx-0">
             Your Campus Pulse. Discover, create, and join events. All in one place.
           </p>
-<<<<<<< HEAD
           <Button onClick={onEnter} className="text-lg px-8 py-4 animate-pulse-glow">
-=======
-          <Button onClick={() => onNavigate('login')} className="text-lg px-8 py-4 animate-pulse-glow">
->>>>>>> 623e149 (your message here)
             Get Started
           </Button>
         </div>
@@ -444,29 +326,7 @@ const LoginPage: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigat
   const handleLogin = async () => {
     setError('');
     setIsLoggingIn(true);
-<<<<<<< HEAD
     // This function will not be called in the current app state, but is kept for reference
-=======
-    try {
-      await authService.loginWithGoogle();
-      // onAuthChange listener in App.tsx will handle navigation
-    } catch (err: any) {
-      console.error("Firebase Login Error:", err);
-      if (err.code === 'auth/configuration-not-found') {
-          setError(<FirebaseConfigErrorGuide projectId="campulse-9f1c8" />);
-      } else if (err.code === 'auth/unauthorized-domain') {
-          const currentDomain = window.location.hostname;
-          setError(<FirebaseDomainErrorGuide projectId="campulse-9f1c8" currentDomain={currentDomain} />);
-      } else if (err.code === 'auth/popup-closed-by-user' || err.code === 'auth/cancelled-popup-request') {
-        setError("Login cancelled. Please try again when you're ready.");
-      } else if (err.code === 'auth/operation-not-allowed') {
-          setError("Login failed. Please ensure this domain is authorized in your Firebase project settings under Authentication > Settings.");
-      } else {
-        setError("An unexpected error occurred. Please try again.");
-      }
-      setIsLoggingIn(false);
-    }
->>>>>>> 623e149 (your message here)
   };
 
   return (
@@ -533,7 +393,7 @@ const StudentDashboard: React.FC<{ user: User }> = ({ user }) => {
                 {bookmarkedEvents.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {bookmarkedEvents.map(event => (
-                            <EventCard key={event.id} event={event} isBookmarked={true} onBookmarkToggle={handleBookmarkToggle} />
+                            <EventCard key={event.id} event={event} userEmail={user.email} isBookmarked={true} onBookmarkToggle={handleBookmarkToggle} />
                         ))}
                     </div>
                 ) : (
@@ -547,7 +407,7 @@ const StudentDashboard: React.FC<{ user: User }> = ({ user }) => {
                 <h3 className="text-2xl font-semibold mb-4 text-brand-text-light dark:text-brand-text-dark">Happening Soon</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {events.slice(0, 3).map(event => (
-                        <EventCard key={event.id} event={event} isBookmarked={event.bookmarkedBy.includes(user.id)} onBookmarkToggle={handleBookmarkToggle} />
+                        <EventCard key={event.id} event={event} userEmail={user.email} isBookmarked={event.bookmarkedBy.includes(user.id)} onBookmarkToggle={handleBookmarkToggle} />
                     ))}
                 </div>
             </div>
@@ -600,6 +460,7 @@ const AllEventsPage: React.FC<{user: User}> = ({user}) => {
                     <EventCard 
                         key={event.id}
                         event={event} 
+                        userEmail={user.email}
                         isBookmarked={event.bookmarkedBy.includes(user.id)}
                         onBookmarkToggle={handleBookmarkToggle}
                     />
@@ -757,8 +618,4 @@ const ClubDashboard: React.FC<{ user: User }> = ({ user }) => {
 };
 
 
-<<<<<<< HEAD
 export default App;
-=======
-export default App;
->>>>>>> 623e149 (your message here)

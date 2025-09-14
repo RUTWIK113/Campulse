@@ -16,7 +16,7 @@ export const formatDate = (date: Date): string => {
  * Generates a Google Calendar event creation link.
  * Assumes a default event duration of 2 hours.
  */
-export const generateGoogleCalendarLink = (event: Event): string => {
+export const generateGoogleCalendarLink = (event: Event, userEmail?: string): string => {
   const formatGoogleDate = (date: Date): string => {
     return date.toISOString().replace(/-|:|\.\d\d\d/g, '');
   };
@@ -30,6 +30,10 @@ export const generateGoogleCalendarLink = (event: Event): string => {
   url.searchParams.append('dates', `${formatGoogleDate(startTime)}/${formatGoogleDate(endTime)}`);
   url.searchParams.append('details', event.description);
   url.searchParams.append('location', event.location);
+
+  if (userEmail) {
+    url.searchParams.append('login_hint', userEmail);
+  }
 
   return url.toString();
 };
